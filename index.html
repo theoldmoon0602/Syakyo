@@ -16,59 +16,91 @@
         color: blue;
         font-weight: bold;
     }
+    #container {
+        display: flex;
+        flex-direction: row;
+
+    }
 </style>
 <h1> Comparator</h1>
 
-<textarea id="tehon">
-</textarea>
+<div id="container">
+    <div>
+        <textarea id="tehon"></textarea>
 
-<h2>Your input</h2>
+        <h2>Your input</h2>
 
-<div id="status">
+        <div id="status"></div>
+        <textarea id="input"></textarea>
+    </div>
+    <div>
+        <h3 id="word"></h3>
+        <div id="mean"></div>
+    </div>
 </div>
-<textarea id="input">
-</textarea>
-
 <script>
-;(function () {
-    var tehon = document.querySelector("#tehon");
-    var input = document.querySelector("#input");
-    var status = document.querySelector("#status");
+    ; (function () {
+        var tehon = document.querySelector("#tehon");
+        var input = document.querySelector("#input");
+        var status = document.querySelector("#status");
+        var word = document.querySelector("#word");
+        var mean = document.querySelector("#mean");
 
-    tehon.onchange = function () {
-        var w=0,h=0;
-        var t = tehon.value.split("\n");
-        h = t.length;
-        for(var i = 0; i < t.length; i++) {
-            t[i] = t[i].trim();
-            if (t[i].length > w) {
-                w = t[i];
+        tehon.onchange = function () {
+            var w = 0, h = 0;
+            var t = tehon.value.split("\n");
+            h = t.length;
+            for (var i = 0; i < t.length; i++) {
+                t[i] = t[i].trim();
+                if (t[i].length > w) {
+                    w = t[i];
+                }
+            }
+            w += 2;
+            h += 2;
+
+            tehon.style.width = w + "em";
+            tehon.style.height = h + "em";
+
+            tehon.value = t.join("\n");
+        }
+
+        input.onkeyup = function () {
+            var t = input.value;
+            if (t == tehon.value.substring(0, t.length)) {
+                status.innerHTML = "OK";
+                status.className = "correct";
+                if (t == tehon.value) {
+                    status.className = "perfect";
+                    status.innerHTML = "Perfect!!!!";
+                }
+            }
+            else {
+                status.innerHTML = "NG";
+                status.className = "wrong";
+            }
+
+            var term = [' ', "\n", ",", "."]
+            if (term.indexOf(t[t.length-1]) >= 0) {
+                var ts = t.split(/[\n,\. ]/);
+                var i = ts.length-1;
+                for (; i >= 0; i--) {
+                    if (ts[i].length > 0) {
+                        break;
+                    }
+                }
+                var w = ts[i];
+
+                fetch("back.php?word="+w).then(r=> {
+                    if (r.ok) {
+                        r.text().then(t => {
+                            word.innerHTML = w;
+                            mean.innerHTML = t;
+                        });
+                    }
+                });
             }
         }
-        w += 2;
-        h += 2;
-
-        tehon.style.width = w+"em";
-        tehon.style.height = h+"em";
-
-        tehon.value = t.join("\n");
-    } 
-
-    input.onkeyup = function () {
-        var t = input.value;
-        if (t == tehon.value.substring(0, t.length)) {
-            status.innerHTML = "OK";
-            status.className = "correct";
-            if (t == tehon.value) {
-                status.className = "perfect";
-                status.innerHTML = "Perfect!!!!";
-            }
-        }
-        else {
-            status.innerHTML = "NG";
-            status.className = "wrong";
-        }
-    }
-})();
+    })();
 
 </script>
