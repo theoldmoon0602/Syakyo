@@ -1,0 +1,74 @@
+<style>
+    textarea {
+        width: 40em;
+        height: 20em;
+    }
+
+    .wrong {
+        color: red;
+    }
+
+    .correct {
+        color: green;
+    }
+
+    .perfect {
+        color: blue;
+        font-weight: bold;
+    }
+</style>
+<h1> Comparator</h1>
+
+<textarea id="tehon">
+</textarea>
+
+<h2>Your input</h2>
+
+<div id="status">
+</div>
+<textarea id="input">
+</textarea>
+
+<script>
+;(function () {
+    var tehon = document.querySelector("#tehon");
+    var input = document.querySelector("#input");
+    var status = document.querySelector("#status");
+
+    tehon.onchange = function () {
+        var w=0,h=0;
+        var t = tehon.value.split("\n");
+        h = t.length;
+        for(var i = 0; i < t.length; i++) {
+            t[i] = t[i].trim();
+            if (t[i].length > w) {
+                w = t[i];
+            }
+        }
+        w += 2;
+        h += 2;
+
+        tehon.style.width = w+"em";
+        tehon.style.height = h+"em";
+
+        tehon.value = t.join("\n");
+    } 
+
+    input.onkeyup = function () {
+        var t = input.value;
+        if (t == tehon.value.substring(0, t.length)) {
+            status.innerHTML = "OK";
+            status.className = "correct";
+            if (t == tehon.value) {
+                status.className = "perfect";
+                status.innerHTML = "Perfect!!!!";
+            }
+        }
+        else {
+            status.innerHTML = "NG";
+            status.className = "wrong";
+        }
+    }
+})();
+
+</script>
